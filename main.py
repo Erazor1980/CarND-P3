@@ -14,7 +14,9 @@ else:
     pathToCSV = './data_udacity/driving_log.csv'
 
 '''
-LOADING DATA FROM CSV FILE
+##########################################
+####### LOADING DATA FROM CSV FILE #######
+##########################################
 '''
 lines = [] # lines of the csv file
 with open(pathToCSV) as csvfile:
@@ -63,7 +65,9 @@ for line in lines[1:]:
 print("done.\nOriginal Dataset:\n\tNumber images:", len(images), "\n\tNumber steering angles:", len(steer_angles))
 
 '''
-AUGMENTING DATASET
+##################################
+####### AUGMENTING DATASET #######
+##################################
 '''
 aug_images = []
 aug_steer_angles = []
@@ -79,8 +83,11 @@ X_train = np.array(aug_images)
 y_train = np.array(aug_steer_angles)
 
 print("\nAugmented Dataset:\n\tNumber images:", len(aug_images), "\n\tNumber steering angles:", len(aug_steer_angles))
+
 '''
-CREATING AND TRAIN MODEL
+#########################################
+####### CREATING AND TRAIN MODEL #######
+#########################################
 '''
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda, Cropping2D
