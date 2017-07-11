@@ -27,6 +27,7 @@ My project includes the following files:
 * drive.py for driving the car in autonomous mode
 * model.h5 containing a trained convolution neural network 
 * writeup_report.md summarizing the results
+* (main.py with previous attempts, using image flipping, but without generators)
 
 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
@@ -75,7 +76,7 @@ Following scenarios have been recorded:
 There is a parameter to use data from the side cameras ("useSideCameras", line 10), the appropriate angles are calculated with the correction value of 0.25 (see line 71).
 For details about how I created the training data, see the next section. 
 
-### Model Architecture and Training Strategy
+### Architecture and Training Documentation
 
 1. Solution Design Approach
 
