@@ -11,16 +11,14 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/image1.jpg "Center driving"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image2]: ./examples/image2.png "Right to center"
+[image3]: ./examples/image3.png "Right to center"
+[image4]: ./examples/image4.png "Right to center"
+[image5]: ./examples/image5.png "Track 2"
 
 ## Rubric Points
 ---
-###Files Submitted & Code Quality
+### Files Submitted & Code Quality
 
 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
@@ -41,7 +39,7 @@ python drive.py model_nvidia.h5
 The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 There are several parameter (bools) which can be set at the beginning of the file, like using side cameras, displaying loaded images, which data set or which model to use.
 
-###Model Architecture and Training Strategy
+### Model Architecture and Training Strategy
 
 1. An appropriate model architecture has been employed
 
@@ -74,9 +72,10 @@ Following scenarios have been recorded:
     
 * short driving on track 2
 
+There is a parameter to use data from the side cameras ("useSideCameras", line 10), the appropriate angles are calculated with the correction value of 0.25 (see line 71).
 For details about how I created the training data, see the next section. 
 
-###Model Architecture and Training Strategy
+### Model Architecture and Training Strategy
 
 1. Solution Design Approach
 
@@ -98,24 +97,17 @@ To capture good driving behavior, I first recorded two laps on track one using c
 
 ![alt text][image1]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to do it on its own. These images show what a recovery looks like starting from ... :
 
+![alt text][image2]
 ![alt text][image3]
 ![alt text][image4]
+
+Additionally I recorded some curves from track 2:
 ![alt text][image5]
 
-Then I repeated this process on track two in order to get more data points.
+After the collection process, I had 10.815 number of data points. 
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 3. I used an adam optimizer so that manually training the learning rate wasn't necessary.
