@@ -4,7 +4,10 @@ import csv
 ownDataSet = True
 # if True -> use NVIDIA architecture, otherwise old traffic-sign-LeNet modification
 nvidiaArchitecture = True
-
+# if True -> display images after reading them with opencv (and e.g. flipping)
+displayImages = False
+# for the 2 additional cameras (datasets will be 3 times bigger if True)
+useSideCameras = True
 
 if ownDataSet == True:
     pathToCSV = './data/driving_log.csv'
@@ -30,7 +33,7 @@ train_samples, validation_samples = train_test_split(lines, test_size=0.2)
 import cv2
 import numpy as np
 import sklearn
-
+import random
 '''
 ------------------------------
 ---- GENERATOR DEFINITION ----
@@ -48,15 +51,48 @@ def generator(samples, batch_size=32):
             for batch_sample in batch_samples:
                 if ownDataSet == True:
                     name = './data/IMG/' + batch_sample[0].split('\\')[-1]
+                    if useSideCameras:
+                        nameLeft = './data/IMG/' + batch_sample[1].split('\\')[-1]
+                        nameRight = './data/IMG/' + batch_sample[2].split('\\')[-1]
                 else:
                     name = './data_udacity/IMG/' + batch_sample[0].split('/')[-1]
+                    if useSideCameras:
+                        nameLeft = './data_udacity/IMG/' + batch_sample[1].split('/')[-1]
+                        nameRight = './data_udacity/IMG/' + batch_sample[2].split('/')[-1]
 
                 center_image = cv2.imread(name)
                 center_angle = float(batch_sample[3])
+
+                if useSideCameras:
+                    left_image = cv2.imread(nameLeft)
+                    rigth_image = cv2.imread(nameRight)
+                    images.append(left_image)
+                    images.append(rigth_image)
+                    correction = 0.25
+                    steer_angle_left = center_angle + correction
+                    steer_angle_right = center_angle - correction
+                    angles.append(steer_angle_left)
+                    angles.append(steer_angle_right)
                 images.append(center_image)
                 angles.append(center_angle)
 
-            # trim image to only see section with road
+                # flipping 50% of the images horizontally
+                '''
+                if random.random() < 0.5:
+                    images.append(cv2.flip(center_image, 1))
+                    angles.append(center_angle * -1.0)
+                    if displayImages == True:
+                        cv2.imshow('flipped image', cv2.flip(center_image, 1))
+                        cv2.waitKey(1)
+                else:
+                    images.append(center_image)
+                    angles.append(center_angle)
+                    if displayImages == True:
+                        cv2.imshow('image', center_image)
+                        cv2.waitKey(1)
+                '''
+
+            # trim image to only see section with road -> this is done in the model
             X_train = np.array(images)
             y_train = np.array(angles)
             yield sklearn.utils.shuffle(X_train, y_train)
@@ -103,8 +139,13 @@ else:
 model.compile(loss='mse', optimizer='adam')
 #model.fit_generator(train_generator, samples_per_epoch= len(train_samples), validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=3)
 
-history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator,
-                                     nb_val_samples=len(validation_samples), nb_epoch=3, verbose=1)
+samplePerEcho = len(train_samples)
+valSamples = len(validation_samples)
+if useSideCameras:
+    samplePerEcho *= 3
+    valSamples *= 3
+history_object = model.fit_generator(train_generator, samples_per_epoch=samplePerEcho, validation_data=validation_generator,
+                                     nb_val_samples=valSamples, nb_epoch=3, verbose=1)
 
 if nvidiaArchitecture == True:
     model.save('model_nvidia.h5')
