@@ -101,9 +101,29 @@ else:
     model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
-model.fit_generator(train_generator, samples_per_epoch= len(train_samples), validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=3)
+#model.fit_generator(train_generator, samples_per_epoch= len(train_samples), validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=3)
+
+history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator,
+                                     nb_val_samples=len(validation_samples), nb_epoch=3, verbose=1)
 
 if nvidiaArchitecture == True:
     model.save('model_nvidia.h5')
 else:
     model.save('model.h5')
+'''
+################################
+####### VISUALIZING LOSS #######
+################################
+'''
+import matplotlib.pyplot as plt
+### print the keys contained in the history object
+print(history_object.history.keys())
+
+### plot the training and validation loss for each epoch
+plt.plot(history_object.history['loss'])
+plt.plot(history_object.history['val_loss'])
+plt.title('model mean squared error loss')
+plt.ylabel('mean squared error loss')
+plt.xlabel('epoch')
+plt.legend(['training set', 'validation set'], loc='upper right')
+plt.show()
